@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# Redux로 TodoList 만들기..
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+첫 Redux로 적용해 보았다.. 처음이라 너무 어렵고 이해하기 힘들었는데 완성해서 다행이다.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+<img width="1230" alt="스크린샷 2022-10-12 오전 9 26 37" src="https://user-images.githubusercontent.com/112137813/195222110-fd170442-9fb3-4213-b8a1-e25072b133ee.png">
 
-### `npm start`
+---
+### `Components 구조`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Form.jsx : 제목, 내용을 받아오는 곳
+2. Header.jsx : 최상단 헤더
+3. Layout.jsx : 홈의 전체의 틀
+4. TodoList.jsx : TodoList의 핵심!
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### `사용한 패키지`
 
-### `npm test`
+"@testing-library/jest-dom": "^5.16.5",\
+    "@testing-library/react": "^13.4.0",\
+    "@testing-library/user-event": "^13.5.0",\
+    "react": "^18.2.0",\
+    "react-dom": "^18.2.0",\
+    "react-redux": "^8.0.4",\
+    "react-router-dom": "^6.4.2",\
+    "react-scripts": "5.0.1",\
+    "redux": "^4.2.0",\
+    "styled-components": "^5.3.6",\
+    "web-vitals": "^2.1.4"
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### `핵심 주제`
 
-### `npm run build`
+1. 리액트 라우터 사용
+2. 리액트 리덕스 사용
+3. 리액트 스타일 컴포넌트 사용
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### TroubleShooting
 
-### `npm run eject`
+1. Form Tag 사용시 새로고침
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Form tag default 값은 submit이라서 추가하기 버튼 누르면 저장후 새로고침되서 리렌더링 됨..
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+따라서 button 타입에 버튼을 입력하거나 onSubmit에 추가하는 함수 만들고 그안에서  e.preventDefault(); 함수 이용해서 제출 막기 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<br> 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+2. 상세 페이지로 이동시 값 보내주기
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+상세보기 누르면 id값과 같은 내용 상세페이지로 보여주는 과정에서 값을 보내주는게 안됬었음..
+```
+<Link to={`/${todos.id}`} state={{ id: todos.id, title: todos.title, body: todos.body }} >
+```
+이렇게 state={{ }} 로 안에 값을 보내주면 상세페이지에서 useLocation()으로 받아와서 값을 보내줄 수 있음
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+보내주는 값을 구조분해 할당하여 위치에 맞는 값을 나타내줌!  
 
-### Code Splitting
+<br> 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. Toggle = 완료, 취소 판별
+```
+case TOGGLE:
+      const newTodos = [];
+      state.map((todos) => {
+        if (todos.id === action.id) {
+          return newTodos.push({ ...todos, isDone: !todos.isDone });
+        } else {
+          return newTodos.push({ ...todos });
+        }
+      });
+      return newTodos;
+```
+새로운 배열을 만들고 그에 맞는 id를 확인하여 isDone값을 변환 !! 
+      
+<br> 
